@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hunt Playbook &amp; Report Builder</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f3f5f7;--sf:#fff;--tx:#1b2430;--mu:#5a6676;--bd:#d9dfe6;--ac:#0f6b78;--cd:#eef2f5;--ok:#146c43;--okb:#dcf5e7;--me:#8a4b08;--meb:#fdf0d5}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1419;--sf:#171e26;--tx:#e6ebf0;--mu:#94a1b0;--bd:#2a3441;--ac:#4cc3d1;--cd:#0c1117;--ok:#6fdca4;--okb:#0f2e20;--me:#f4b860;--meb:#37270d}}
+:root[data-theme="dark"]{--bg:#0f1419;--sf:#171e26;--tx:#e6ebf0;--mu:#94a1b0;--bd:#2a3441;--ac:#4cc3d1;--cd:#0c1117;--ok:#6fdca4;--okb:#0f2e20;--me:#f4b860;--meb:#37270d}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:22px 16px 44px}
+header{display:flex;gap:16px;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+h1{font-size:25px;line-height:1.2;letter-spacing:-.01em}h2{font-size:19px;margin-bottom:4px}
+.mu{color:var(--mu)}header p{max-width:62ch;margin-top:6px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--sf);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:7px 12px}
+.btn:hover{border-color:var(--ac)}.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--bg);font-weight:600}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.note{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13.5px;color:var(--mu)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bd);margin-bottom:16px;overflow-x:auto}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;color:var(--mu);white-space:nowrap}
+.tab.on{color:var(--tx);border-bottom-color:var(--ac);font-weight:600}
+.pbgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:14px}
+.pbc{text-align:left;background:var(--sf);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:9px 12px;display:flex;flex-direction:column;gap:2px}
+.pbc span{font-size:12.5px;color:var(--mu)}.pbc:hover{border-color:var(--ac)}.pbc.on{border:2px solid var(--ac);padding:8px 11px}
+.panel{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px}
+.panel p{margin-top:6px}a{color:var(--ac)}
+.prog{height:8px;background:var(--cd);border-radius:99px;overflow:hidden;margin-top:12px}.prog div{height:100%;background:var(--ac);transition:width .2s}
+.step{border-top:1px solid var(--bd);padding:11px 0}.step:first-of-type{margin-top:10px}
+.ck{display:flex;gap:10px;align-items:flex-start;cursor:pointer}.ck input{margin-top:5px;width:17px;height:17px;accent-color:var(--ac);flex:none}
+.qr{display:flex;gap:8px;align-items:flex-start;margin:7px 0 0 27px}.qr pre{flex:1}.qr .btn{padding:5px 10px;font-size:13px;margin-top:4px}
+pre{background:var(--cd);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;margin-top:4px;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word}
+input,select,textarea{width:100%;font:inherit;background:var(--cd);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:8px 10px}
+textarea{resize:vertical}.nt{margin:7px 0 0 27px;width:calc(100% - 27px);font-size:13.5px}
+label{font-weight:600;display:block;margin:12px 0 5px}.form label:first-child{margin-top:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:620px){.g2{grid-template-columns:1fr}}
+.opt{display:flex;gap:9px;align-items:flex-start;font-weight:400;margin:6px 0}.opt input{width:17px;height:17px;margin-top:4px;accent-color:var(--ac);flex:none}
+.hint{border-radius:10px;padding:9px 13px;margin-top:12px;font-size:14px;background:var(--cd)}.hint.y{background:var(--meb);color:var(--me)}
+details{margin-top:12px}summary{cursor:pointer;font-weight:600}ul{margin:6px 0 0 20px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+#rep{min-height:420px;font:12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+footer{margin-top:18px;font-size:13px;color:var(--mu)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div><h1>Hunt Playbook &amp; Report Builder</h1>
+ <p class="mu">Pick a technique, work through the checklist, and turn your findings into a structured case report. Companion to the Splunk Threat Hunting Lab.</p></div>
+ <button class="btn" id="th" type="button">Switch theme</button>
+</header>
+<div class="note">Nothing is saved or sent anywhere. Copy your report before closing the page. Playbooks are starting points based on common analyst practice. Adapt them to your environment.</div>
+<div class="tabs" role="tablist">
+ <button class="tab on" role="tab" data-t="t1" type="button">1. Playbook</button>
+ <button class="tab" role="tab" data-t="t2" type="button">2. Case details</button>
+ <button class="tab" role="tab" data-t="t3" type="button">3. Report</button>
+</div>
+
+<section id="t1"><div class="pbgrid" id="pbg"></div><div id="pbd"></div></section>
+
+<section id="t2" hidden>
+<div class="panel form">
+ <div class="g2"><div><label for="ti">Case title</label><input id="ti" placeholder="e.g. Encoded PowerShell started by Word on WS-01"></div>
+ <div><label for="an">Analyst</label><input id="an"></div></div>
+ <div class="g2"><div><label for="dt">Date and time</label><input id="dt" type="datetime-local"></div>
+ <div><label for="sv">Severity</label><select id="sv"><option>Low</option><option selected>Medium</option><option>High</option></select></div></div>
+ <div class="g2"><div><label for="sy">Systems affected</label><input id="sy" placeholder="Hostnames or IPs, comma separated"></div>
+ <div><label for="us">Users affected</label><input id="us"></div></div>
+ <label for="su">What happened</label><textarea id="su" rows="4" placeholder="Who, what, when, where, and why it matters"></textarea>
+ <label for="io">Indicators of compromise (one per line)</label><textarea id="io" rows="4" placeholder="IP addresses, domains, URLs, file paths, hashes"></textarea>
+ <div class="g2"><div><label for="cl">Classification</label><select id="cl"><option>True positive</option><option>False positive</option><option selected>Undetermined</option></select></div>
+ <div><label for="es">Escalate?</label><select id="es"><option>Yes</option><option>No</option><option selected>Undecided</option></select></div></div>
+ <div class="hint" id="sug"></div>
+ <label for="ra">Escalation rationale</label><textarea id="ra" rows="3" placeholder="Why you are or are not escalating"></textarea>
+ <label>Recommended actions</label><div id="acts"></div>
+ <label for="xa">Other recommended actions (one per line)</label><textarea id="xa" rows="2"></textarea>
+ <label for="nt">Notes and limitations</label><textarea id="nt" rows="2" placeholder="What you could not verify"></textarea>
+</div>
+<button class="btn pri" type="button" data-go="t3">Build report</button>
+</section>
+
+<section id="t3" hidden>
+<div class="panel">
+ <div class="row" style="margin-top:0"><button class="btn pri" id="cpr" type="button">Copy report</button>
+ <label class="opt" style="margin:0"><input type="checkbox" id="df" checked> Defang URLs, domains, and IPs in indicators</label></div>
+ <label for="rep">Report (Markdown)</label><textarea id="rep" readonly></textarea>
+ <p class="mu" style="margin-top:8px;font-size:13.5px">Paste into a .md file, a GitHub README, or a ticket. Only steps you ticked are listed as performed.</p>
+</div>
+</section>
+<footer>Recommended actions are suggestions for an analyst to evaluate, not automatic responses. The report reflects only what you enter.</footer>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const tu=t=>'https://attack.mitre.org/techniques/'+t.replace('.','/')+'/';
+const PB=[
+{id:'ps',title:'Suspicious PowerShell',tech:'T1059.001',hyp:'PowerShell is being used to run hidden, encoded, or download-based commands.',src:'Sysmon Event ID 1 and 3',
+steps:[
+{t:'List PowerShell runs on the host',d:'Get a baseline of what ran, as whom, and when.',q:'index=wineventlog EventCode=1 Image="*powershell.exe" host="<host>" | table _time, User, ParentImage, CommandLine | sort _time'},
+{t:'Check the parent process',d:'Office apps, browsers, and script hosts starting PowerShell are suspicious.',q:'index=wineventlog EventCode=1 Image="*powershell.exe" (ParentImage="*winword.exe" OR ParentImage="*excel.exe" OR ParentImage="*outlook.exe")'},
+{t:'Filter for encoded or hidden commands',d:'Look for -enc, -nop, and hidden window flags.',q:'index=wineventlog EventCode=1 Image="*powershell.exe" (CommandLine="*-enc*" OR CommandLine="*-w hidden*" OR CommandLine="*-nop*")'},
+{t:'Decode any Base64 payload',d:'The value after -enc is UTF-16LE Base64. Decode it and note what the script does.'},
+{t:'Check network activity from the same host',d:'Did PowerShell connect out after it ran?',q:'index=wineventlog EventCode=3 host="<host>" Image="*powershell.exe" | stats count by DestinationIp, DestinationPort'},
+{t:'Review what happened next on the host',d:'Look for new persistence, accounts, or tools after the command.',q:'index=wineventlog host="<host>" (EventCode=1 OR EventCode=13) | sort _time'}],
+esc:['Decoded script downloads or runs remote content','Parent process is an Office app or browser','Host made outbound connections to an unknown external IP soon after'],
+fp:['Admin scripts and management tools','Software installers','Backup or monitoring agents'],
+act:['Isolate the affected host if malicious activity is confirmed','Reset credentials for the affected user','Block the destination IP or domain','Collect the script and decoded payload for analysis']},
+{id:'run',title:'Run key persistence',tech:'T1547.001',hyp:'A program was set to start automatically at logon.',src:'Sysmon Event ID 13 and 1',
+steps:[
+{t:'List Run key writes',d:'Find recent values set under the Run and RunOnce keys.',q:'index=wineventlog EventCode=13 TargetObject="*CurrentVersion\\\\Run*" | table _time, host, Image, TargetObject, Details | sort _time'},
+{t:'Identify which process wrote the key',d:'The Image field shows the writer. Script hosts and Office apps are red flags.'},
+{t:'Inspect the value path',d:'Temp, AppData, Downloads, and Public folders are unusual for real software.'},
+{t:'Check whether the program ran',d:'See if the referenced program executed after the key was set.',q:'index=wineventlog EventCode=1 host="<host>" Image="*<program>*" | table _time, User, ParentImage, CommandLine'},
+{t:'Look for the same value on other hosts',d:'Search for the same program path or value name.',q:'index=wineventlog EventCode=13 Details="*<program>*" | stats count by host'}],
+esc:['Value points to Temp, AppData, or Public','Written by a script host or Office app','Program is unsigned or unknown'],
+fp:['Installers and updaters','Corporate management agents','User-installed apps such as chat or sync clients'],
+act:['Remove the Run value after preserving evidence','Isolate the host if the program is malicious','Collect the executable for analysis','Check other hosts for the same value']},
+{id:'c2',title:'C2 beaconing',tech:'T1071',hyp:'A host is contacting an external server at regular intervals.',src:'Sysmon Event ID 3',
+steps:[
+{t:'List external connections by process',d:'Find which programs talk to the internet.',q:'index=wineventlog EventCode=3 host="<host>" | stats count, dc(DestinationIp) as dests, values(DestinationPort) as ports by Image | sort - count'},
+{t:'Check for unusual ports',d:'Ports such as 4444, 1337, and 31337 deserve a closer look.',q:'index=wineventlog EventCode=3 (DestinationPort=4444 OR DestinationPort=1337 OR DestinationPort=31337) | table _time, host, Image, DestinationIp, DestinationPort'},
+{t:'Test for regular timing',d:'Beacons tend to connect at steady intervals. Low jitter relative to the average interval is a lead.',q:'index=wineventlog EventCode=3 host="<host>" DestinationIp="<ip>" | sort 0 _time | streamstats current=f last(_time) as prev | eval delta=_time-prev | stats count, avg(delta) as avg_s, stdev(delta) as jitter'},
+{t:'Check destination reputation',d:'Look the IP or domain up in a threat-intel tool and record the result.'},
+{t:'Identify the process and its parent',d:'Who started the program making the connections?',q:'index=wineventlog EventCode=1 host="<host>" Image="*<program>*" | table _time, ParentImage, CommandLine'}],
+esc:['Connections at very regular intervals to the same external IP','Destination flagged malicious by a reputation tool','Connections initiated by a script host or unsigned program'],
+fp:['Update checks and telemetry agents','Monitoring tools','Time sync and heartbeat services'],
+act:['Block the destination at the firewall','Isolate the host','Review other hosts contacting the same destination','Collect the process and its files for analysis']},
+{id:'log',title:'Event log cleared',tech:'T1070.001',hyp:'Someone cleared event logs to hide earlier activity.',src:'Windows Event IDs 1102 and 104, Sysmon Event ID 1',
+steps:[
+{t:'Find the clear events',d:'1102 is the Security log. 104 covers other logs.',q:'index=wineventlog (EventCode=1102 OR EventCode=104) | table _time, host, EventCode, Message'},
+{t:'Identify who cleared it and when',d:'Account field names vary by ingestion method. Check Message if needed.'},
+{t:'Check for wevtutil use',d:'The command line may show how it was done.',q:'index=wineventlog EventCode=1 Image="*wevtutil.exe" (CommandLine="* cl *" OR CommandLine="*clear-log*")'},
+{t:'Review activity before the clear',d:'What happened on the host in the hour before?',q:'index=wineventlog host="<host>" | sort _time'},
+{t:'Check for a maintenance window',d:'Look for a change ticket or planned IT work covering this time.'}],
+esc:['No change ticket or maintenance window','Clear followed suspicious activity on the host','Performed by an account that does not normally administer the host'],
+fp:['Scheduled IT maintenance','Lab or image resets','Log rotation tools'],
+act:['Preserve remaining logs and forward them to the SIEM','Review the account that cleared the log','Investigate activity before the clear','Confirm logs are forwarded off-host']},
+{id:'lat',title:'Lateral movement',tech:'T1021',hyp:'An attacker is moving between internal hosts over admin protocols.',src:'Sysmon Event ID 3 and 1, Windows logon events',
+steps:[
+{t:'Find internal connections on admin ports',d:'SMB 445, RDP 3389, and WinRM 5985 and 5986.',q:'index=wineventlog EventCode=3 (DestinationPort=445 OR DestinationPort=3389 OR DestinationPort=5985 OR DestinationPort=5986) | stats dc(DestinationIp) as targets by host, Image | sort - targets'},
+{t:'Look for one host reaching many targets',d:'A workstation connecting to many others is unusual.'},
+{t:'Identify the account used',d:'Check logon events on the target. Field names vary by ingestion method.',q:'index=wineventlog EventCode=4624 host="<target>" | table _time, Message'},
+{t:'Check what ran on the target afterward',d:'New processes right after the connection are a strong lead.',q:'index=wineventlog EventCode=1 host="<target>" | table _time, ParentImage, Image, CommandLine | sort _time'},
+{t:'Check the source host',d:'How did the source get compromised?'}],
+esc:['One host connecting to many internal targets','Admin account used from an unusual host','Commands executed on the target right after the connection'],
+fp:['IT admins and management tools','Vulnerability scanners','File servers and backup jobs'],
+act:['Disable or reset the account used','Isolate the source host','Review targets for new processes and services','Restrict admin ports between workstations']},
+{id:'ph',title:'Phishing email triage',tech:'T1566.002',hyp:'A user received a malicious link by email and may have clicked it.',src:'Email logs, firewall or proxy logs, threat intel tools',
+steps:[
+{t:'Record sender, recipient, and link',d:'Note the sender domain, the URL, and who received it.',q:'index=* "<sender_domain>"'},
+{t:'Check the sender domain',d:'Look for lookalike spellings, new domains, or free-mail senders posing as a company.'},
+{t:'Check the URL and destination IP',d:'Use a reputation tool and record the verdict.'},
+{t:'Find out whether anyone clicked',d:'Search firewall or proxy logs for the URL or IP.',q:'index=* "<destination_ip>"'},
+{t:'Was the connection blocked or allowed?',d:'Blocked usually means no escalation. Allowed means the user reached the page.'},
+{t:'Check other recipients',d:'Search for the same sender or link across mailboxes.'}],
+esc:['Firewall or proxy allowed the connection','Destination flagged malicious','User may have entered credentials on the page'],
+fp:['Expected partner or vendor emails confirmed by an internal message','Internal training or marketing mail','Newsletters'],
+act:['Reset the password and review sign-in history if the page was reached','Block the sender domain and URL or IP','Remove the email from other mailboxes','Send the user a short awareness note']}];
+const ST={};PB.forEach(p=>ST[p.id]={d:{},n:{},e:{},a:{}});let cur='ps';
+const P=()=>PB.find(x=>x.id===cur);
+function prog(){const p=P(),n=p.steps.filter((_,i)=>ST[cur].d[i]).length;$('pgb').style.width=(n/p.steps.length*100)+'%';$('pgt').textContent=n+' of '+p.steps.length+' steps done'}
+function renderPB(){
+ $('pbg').innerHTML=PB.map(p=>'<button class="pbc'+(p.id===cur?' on':'')+'" type="button" data-p="'+p.id+'"><b>'+esc(p.title)+'</b><span>'+p.tech+'</span></button>').join('');
+ const p=P(),s=ST[cur];
+ let h='<div class="panel"><h2>'+esc(p.title)+'</h2><p class="mu">MITRE ATT&amp;CK: <a href="'+tu(p.tech)+'" target="_blank" rel="noopener">'+p.tech+'</a></p><p><b>Hypothesis.</b> '+esc(p.hyp)+'</p><p class="mu">Data sources: '+esc(p.src)+'. Replace placeholders like &lt;host&gt; and confirm index and field names for your environment.</p><div class="prog"><div id="pgb"></div></div><p class="mu" id="pgt"></p>';
+ p.steps.forEach((st,i)=>{h+='<div class="step"><label class="ck"><input type="checkbox" data-k="d" data-i="'+i+'"'+(s.d[i]?' checked':'')+'><span><b>'+esc(st.t)+'</b><br><span class="mu">'+esc(st.d)+'</span></span></label>'
+  +(st.q?'<div class="qr"><pre>'+esc(st.q)+'</pre><button class="btn cp" type="button" data-q="'+i+'">Copy query</button></div>':'')
+  +'<input class="nt" data-k="n" data-i="'+i+'" placeholder="What did you find? (optional)" value="'+esc(s.n[i]||'')+'"></div>'});
+ h+='<details open><summary>Escalation indicators (tick any you found)</summary>'+p.esc.map((x,i)=>'<label class="opt"><input type="checkbox" data-k="e" data-i="'+i+'"'+(s.e[i]?' checked':'')+'><span>'+esc(x)+'</span></label>').join('')+'</details>';
+ h+='<details><summary>Common false positives</summary><ul>'+p.fp.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></details>';
+ h+='<div class="row"><button class="btn pri" type="button" data-go="t2">Continue to case details</button></div></div>';
+ $('pbd').innerHTML=h;prog();
+}
+function renderForm(){
+ const p=P(),s=ST[cur];
+ $('acts').innerHTML=p.act.map((x,i)=>'<label class="opt"><input type="checkbox" data-k="a" data-i="'+i+'"'+(s.a[i]?' checked':'')+'><span>'+esc(x)+'</span></label>').join('');
+ sug();
+}
+function sug(){const p=P(),n=p.esc.filter((_,i)=>ST[cur].e[i]).length,h=$('sug');
+ h.className='hint'+(n?' y':'');
+ h.textContent=n?n+' of '+p.esc.length+' escalation indicators found. Escalation is worth considering. The decision is yours.':'No escalation indicators ticked yet. Tick them in the playbook tab as you find them.'}
+function build(){
+ const p=P(),s=ST[cur],v=id=>$(id).value.trim(),ln=t=>t.split(/\r?\n/).map(x=>x.trim()).filter(Boolean),df=$('df').checked;
+ const fg=l=>df&&!/\\/.test(l)?l.replace(/^https?/i,m=>m.toLowerCase()==='https'?'hxxps':'hxxp').replace(/\./g,'[.]'):l;
+ const np=x=>x||'_not provided_',dt=v('dt')?v('dt').replace('T',' '):'';
+ const done=p.steps.map((st,i)=>s.d[i]?'- [x] '+st.t+(s.n[i]&&s.n[i].trim()?': '+s.n[i].trim():''):null).filter(Boolean);
+ const skip=p.steps.filter((_,i)=>!s.d[i]).map(st=>'- '+st.t);
+ const ind=p.esc.filter((_,i)=>s.e[i]).map(x=>'- '+x);
+ const act=p.act.filter((_,i)=>s.a[i]).map(x=>'- '+x).concat(ln(v('xa')).map(x=>'- '+x));
+ const ioc=ln(v('io')).map(x=>'- `'+fg(x)+'`');
+ return ['# Case report: '+(v('ti')||p.title),'',
+ '| Field | Value |','|:--|:--|','| Analyst | '+np(v('an'))+' |','| Date and time | '+np(dt)+' |','| Playbook | '+p.title+' ('+p.tech+') |','| Classification | '+$('cl').value+' |','| Severity | '+$('sv').value+' |','| Escalated | '+$('es').value+' |','',
+ '## What happened','',np(v('su')),'',
+ '## Scope','','- **Systems:** '+np(v('sy')),'- **Users:** '+np(v('us')),'',
+ '## Hypothesis','',p.hyp,'',
+ '## Investigation steps performed','',(done.length?done.join('\n'):'_No steps ticked._'),'',
+ skip.length?'**Steps not performed:**\n\n'+skip.join('\n')+'\n':'',
+ '## Indicators of compromise','',(ioc.length?ioc.join('\n'):'_None recorded._'),'',
+ '## Escalation decision','','**Escalate:** '+$('es').value,'',
+ ind.length?'**Indicators present:**\n\n'+ind.join('\n')+'\n':'',
+ '**Rationale:** '+np(v('ra')),'',
+ '## Recommended actions','',(act.length?act.join('\n'):'_None recorded._'),'',
+ '## Notes and limitations','',np(v('nt'))].join('\n');
+}
+function go(t){['t1','t2','t3'].forEach(x=>{$(x).hidden=x!==t});
+ document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+ if(t==='t2')renderForm();if(t==='t3')$('rep').value=build();window.scrollTo(0,0)}
+function copy(text,b,lbl){const done=()=>{b.textContent='Copied';setTimeout(()=>b.textContent=lbl,1400)};
+ const fb=()=>{const a=document.createElement('textarea');a.value=text;document.body.appendChild(a);a.select();try{document.execCommand('copy');done()}catch(x){}a.remove()};
+ if(navigator.clipboard)navigator.clipboard.writeText(text).then(done,fb);else fb()}
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
+ if(t.dataset.t)go(t.dataset.t);else if(t.dataset.go)go(t.dataset.go);
+ else if(t.dataset.p){cur=t.dataset.p;renderPB()}
+ else if(t.dataset.q!==undefined)copy(P().steps[+t.dataset.q].q,t,'Copy query');
+ else if(t.id==='cpr')copy($('rep').value,t,'Copy report')});
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.k==='n')ST[cur].n[t.dataset.i]=t.value});
+document.addEventListener('change',e=>{const t=e.target,k=t.dataset.k;if(t.id==='df'){$('rep').value=build();return}
+ if(!k||k==='n')return;ST[cur][k][t.dataset.i]=t.checked;if(k==='d')prog();if(k==='e')sug()});
+$('th').onclick=()=>{const r=document.documentElement;const dark=r.getAttribute('data-theme')?r.getAttribute('data-theme')==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.setAttribute('data-theme',dark?'light':'dark')};
+const d0=new Date();d0.setMinutes(d0.getMinutes()-d0.getTimezoneOffset());$('dt').value=d0.toISOString().slice(0,16);
+renderPB();renderForm();
+</script>
+</body>
+</html>
