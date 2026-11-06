@@ -1,7 +1,7 @@
 # 📋 Hunt Playbook & Report Builder
 
 A browser tool that guides an analyst through a threat hunt or alert triage with a checklist, then turns the findings into a structured case report. 
-Live demo: 
+Live demo: https://amadou890.github.io/Hunt-Playbook-Report-Builder/
 ## Why I built it
 
 Hunts and triage notes are often inconsistent: steps get skipped and reports leave out the escalation reasoning. This tool keeps the process repeatable and makes the report reflect what was actually done.
